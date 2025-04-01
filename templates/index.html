@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Threat Detector</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0d1117;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            width: 100%;
+            background: #161b22;
+            padding: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: bold;
+            color: #58a6ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            margin-top: 120px;
+            background: #1c2128;
+            padding: 40px;
+            border-radius: 12px;
+            width: 70%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        input {
+            width: 95%;
+            padding: 14px;
+            font-size: 18px;
+            border: 2px solid #58a6ff;
+            border-radius: 8px;
+            background-color: #22272e;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #238636;
+            color: white;
+            padding: 14px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #2ea043;
+            transform: scale(1.05);
+        }
+
+        .scan-icon {
+            font-size: 20px;
+        }
+
+        /* Spinner */
+        .spinner {
+            display: none;
+            margin: 10px auto;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Result Styling */
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+
+        .benign { color: #34D399; }
+        .defacement { color: #F59E0B; }
+        .malware { color: #EF4444; }
+        .phishing { color: #8B5CF6; }
+        .unknown { color: #ffffff; }
+    </style>
+
+    <script>
+        function showSpinner(formId, spinnerId) {
+            document.getElementById(spinnerId).style.display = 'block';
+            setTimeout(() => {
+                document.getElementById(spinnerId).style.display = 'none';
+            }, 3000);  // Simulating loading time
+        }
+    </script>
+</head>
+<body>
+
+    <div class="navbar">
+        <h1><i class="fas fa-shield-alt"></i> ThreatGuard</h1>
+    </div>
+
+    <div class="container">
+        <h2><i class="fas fa-exclamation-triangle"></i> Malicious Files</h2>
+        <form action="/scam/" method="post" enctype="multipart/form-data" onsubmit="showSpinner('fileForm', 'fileSpinner')">
+            <label for="file"><strong>Upload a file (PDF/TXT only):</strong></label><br>
+            <input type="file" name="file" required><br>
+            <button type="submit"><i class="fas fa-upload scan-icon"></i> Analyze</button>
+            <div id="fileSpinner" class="spinner"></div>
+        </form>
+
+        {% if message %}
+        <h3>Result:</h3>
+        <p>{{ message }}</p>
+        {% endif %}
+
+        <h2><i class="fas fa-link"></i> URL Threat Detection</h2>
+        <form method="post" action="/predict" onsubmit="showSpinner('urlForm', 'urlSpinner')">
+            <label for="url">Enter URL:</label>
+            <input type="text" name="url" required>
+            <button type="submit"><i class="fas fa-search"></i> Classify</button>
+            <div id="urlSpinner" class="spinner"></div>
+        </form>
+
+        {% if predicted_class %}
+            <div class="result-box {{ predicted_class.lower() }}">
+                <p><strong>URL:</strong> {{ input_url }}</p>
+                <p><strong>Predicted Class:</strong> {{ predicted_class }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
