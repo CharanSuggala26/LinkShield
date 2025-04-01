@@ -6,96 +6,170 @@
     <title>URL Threat Detector</title>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #0d1117;
-            color: #ffffff;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --danger: #ff7675;
+            --warning: #fdcb6e;
+            --success: #00b894;
+            --info: #0984e3;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --gradient-primary: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            --gradient-danger: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
         /* Navbar */
         .navbar {
             width: 100%;
-            background: #161b22;
-            padding: 25px 0;
+            background: white;
+            padding: 1.5rem 0;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             position: fixed;
             top: 0;
-            left: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
         .navbar h1 {
             margin: 0;
-            font-size: 32px;
-            font-weight: bold;
-            color: #58a6ff;
-            display: flex;
-            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        .navbar h1 i {
+            color: var(--primary);
+            transition: transform 0.4s ease;
+        }
+
+        .navbar h1:hover i {
+            transform: scale(1.2) rotate(360deg);
         }
 
         .container {
-            margin-top: 120px;
-            background: #1c2128;
-            padding: 40px;
-            border-radius: 12px;
-            width: 70%;
-            max-width: 800px;
-            text-align: center;
+            margin-top: 7rem;
+            margin-bottom: 3rem;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 950px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.6s ease-in-out;
         }
 
-        input {
-            width: 95%;
-            padding: 14px;
-            font-size: 18px;
-            border: 2px solid #58a6ff;
-            border-radius: 8px;
-            background-color: #22272e;
-            color: white;
-            margin-bottom: 15px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--dark);
+        }
+
+        label {
+            font-size: 1rem;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: block;
+            font-weight: 500;
+        }
+
+        input, input[type="file"] {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            font-size: 1rem;
+            border: 2px solid #dfe6e9;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
         }
 
         button {
-            background-color: #238636;
+            background: var(--gradient-primary);
             color: white;
-            padding: 14px;
-            font-size: 18px;
-            border-radius: 8px;
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 10px;
             cursor: pointer;
             width: 100%;
-            transition: 0.3s;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            border: none;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
         }
 
         button:hover {
-            background-color: #2ea043;
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(108, 92, 231, 0.3);
         }
 
         .scan-icon {
-            font-size: 20px;
+            font-size: 1.1rem;
         }
 
         /* Spinner */
         .spinner {
             display: none;
-            margin: 10px auto;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
+            margin: 1.5rem auto;
+            border: 4px solid rgba(108, 92, 231, 0.1);
+            border-top: 4px solid var(--primary);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 2.5rem;
+            height: 2.5rem;
             animation: spin 1s linear infinite;
         }
 
@@ -106,17 +180,152 @@
 
         /* Result Styling */
         .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            font-size: 18px;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: white;
+            border-left: 5px solid;
+            animation: slideIn 0.4s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #dfe6e9;
         }
 
-        .benign { color: #34D399; }
-        .defacement { color: #F59E0B; }
-        .malware { color: #EF4444; }
-        .phishing { color: #8B5CF6; }
-        .unknown { color: #ffffff; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .benign { 
+            border-left-color: var(--success);
+            background-color: rgba(0, 184, 148, 0.05);
+        }
+        .defacement { 
+            border-left-color: var(--warning);
+            background-color: rgba(253, 203, 110, 0.05);
+        }
+        .malware { 
+            border-left-color: var(--danger);
+            background-color: rgba(255, 118, 117, 0.05);
+        }
+        .phishing { 
+            border-left-color: var(--info);
+            background-color: rgba(9, 132, 227, 0.05);
+        }
+        .unknown { 
+            border-left-color: var(--secondary);
+            background-color: rgba(162, 155, 254, 0.05);
+        }
+
+        .result-box p {
+            margin: 0.75rem 0;
+        }
+
+        .result-box strong {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .benign .result-value { background-color: rgba(0, 184, 148, 0.1); color: var(--success); }
+        .defacement .result-value { background-color: rgba(253, 203, 110, 0.1); color: #e17055; }
+        .malware .result-value { background-color: rgba(255, 118, 117, 0.1); color: var(--danger); }
+        .phishing .result-value { background-color: rgba(9, 132, 227, 0.1); color: var(--info); }
+        .unknown .result-value { background-color: rgba(162, 155, 254, 0.1); color: var(--primary); }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 1.5rem;
+                margin-top: 6rem;
+            }
+            
+            .navbar h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            button {
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        /* File upload customization */
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 1.5rem;
+            border: 2px dashed #dfe6e9;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--primary);
+            background-color: rgba(108, 92, 231, 0.05);
+        }
+
+        .file-upload-label i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-label span {
+            display: block;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .file-upload-label small {
+            color: #636e72;
+            font-size: 0.875rem;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* Confidence meter */
+        .confidence-meter {
+            height: 8px;
+            background: #dfe6e9;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .confidence-level {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .benign .confidence-level { background: var(--success); }
+        .defacement .confidence-level { background: var(--warning); }
+        .malware .confidence-level { background: var(--danger); }
+        .phishing .confidence-level { background: var(--info); }
+        .unknown .confidence-level { background: var(--secondary); }
     </style>
 
     <script>
@@ -126,40 +335,81 @@
                 document.getElementById(spinnerId).style.display = 'none';
             }, 3000);  // Simulating loading time
         }
+
+        function updateFileName(input) {
+            const label = input.parentElement.querySelector('span');
+            if (input.files.length > 0) {
+                label.textContent = input.files[0].name;
+            } else {
+                label.textContent = 'Drag & drop your file here or click to browse';
+            }
+        }
     </script>
 </head>
 <body>
 
     <div class="navbar">
-        <h1><i class="fas fa-shield-alt"></i> ThreatGuard</h1>
+        <h1><i class="fas fa-shield-alt"></i> LINK SHIELD</h1>
     </div>
 
     <div class="container">
-        <h2><i class="fas fa-exclamation-triangle"></i> Malicious Files</h2>
+        <h2><i class="fas fa-file-alt"></i> Malware File Detection</h2>
         <form action="/scam/" method="post" enctype="multipart/form-data" onsubmit="showSpinner('fileForm', 'fileSpinner')">
-            <label for="file"><strong>Upload a file (PDF/TXT only):</strong></label><br>
-            <input type="file" name="file" required><br>
-            <button type="submit"><i class="fas fa-upload scan-icon"></i> Analyze</button>
+            <div class="file-upload-wrapper">
+                <label class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Drag & drop your file here or click to browse</span>
+                    <small>Supports PDF, TXT, DOCX (Max 5MB)</small>
+                </label>
+                <input type="file" name="file" required onchange="updateFileName(this)">
+            </div>
+            <button type="submit"><i class="fas fa-search scan-icon"></i> Analyze File</button>
             <div id="fileSpinner" class="spinner"></div>
         </form>
 
         {% if message %}
-        <h3>Result:</h3>
-        <p>{{ message }}</p>
+        <div class="result-box">
+            <h3>Analysis Result</h3>
+            <p>{{ message }}</p>
+        </div>
         {% endif %}
 
         <h2><i class="fas fa-link"></i> URL Threat Detection</h2>
         <form method="post" action="/predict" onsubmit="showSpinner('urlForm', 'urlSpinner')">
-            <label for="url">Enter URL:</label>
-            <input type="text" name="url" required>
-            <button type="submit"><i class="fas fa-search"></i> Classify</button>
+            <label for="url">Enter URL to analyze:</label>
+            <input type="text" name="url" placeholder="https://example.com" required>
+            <button type="submit"><i class="fas fa-shield-alt scan-icon"></i> Scan URL</button>
             <div id="urlSpinner" class="spinner"></div>
         </form>
 
         {% if predicted_class %}
             <div class="result-box {{ predicted_class.lower() }}">
-                <p><strong>URL:</strong> {{ input_url }}</p>
-                <p><strong>Predicted Class:</strong> {{ predicted_class }}</p>
+                <h3>Scan Results</h3>
+                <p><strong>URL Analyzed:</strong> <span>{{ input_url }}</span></p>
+                <p><strong>Threat Classification:</strong> <span class="result-value">{{ predicted_class }}</span></p>
+                
+                {% if confidence %}
+                <div class="confidence-container">
+                    <p><strong>Confidence:</strong> {{ confidence }}%</p>
+                    <div class="confidence-meter">
+                        <div class="confidence-level" style="width: {{ confidence }}%"></div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <p><strong>Description:</strong> 
+                    {% if predicted_class.lower() == 'benign' %}
+                    This URL appears to be safe with no detected threats.
+                    {% elif predicted_class.lower() == 'defacement' %}
+                    This URL may lead to a compromised website that has been defaced.
+                    {% elif predicted_class.lower() == 'malware' %}
+                    This URL is associated with malware distribution.
+                    {% elif predicted_class.lower() == 'phishing' %}
+                    This URL is likely a phishing attempt to steal sensitive information.
+                    {% else %}
+                    The threat classification for this URL couldn't be determined with confidence.
+                    {% endif %}
+                </p>
             </div>
         {% endif %}
     </div>
